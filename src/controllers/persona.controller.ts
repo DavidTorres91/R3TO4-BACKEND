@@ -17,8 +17,9 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
-import {Persona} from '../models';
+import {Persona, Usuario} from '../models';
 import {PersonaRepository} from '../repositories';
 import { UtilidadesService } from '../services';
 
@@ -29,6 +30,22 @@ export class PersonaController {
     @service(UtilidadesService)
     public utilidadesService : UtilidadesService,
   ) {}
+
+  @post('/login')
+  @response(200,{
+    description: "Usuario Logueado con exito."
+  })
+ async loguin(
+  @requestBody() usuario: Usuario
+ ){
+  let persona = await this.utilidadesService.login(usuario.correo,usuario.password);
+
+  if(persona){
+    return(persona)
+  }else{
+    throw new HttpErrors[401]
+  }
+ }
 
   @post('/personas')
   @response(200, {
